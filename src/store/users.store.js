@@ -6,12 +6,17 @@ const state = {
 }
 
 const loadNextPage = async() => {
-    await loadPageByPage( state.CurrentPage + 1)
-
+    const users = await loadPageByPage( state.CurrentPage + 1 );
+    if (users.length === 0) return;
+    state.CurrentPage += 1;
+    state.Users = users;
 }
 
 const loadPreviousPage = async() => {
-
+    if (state.CurrentPage <= 1) return; 
+    const users = await loadPageByPage( state.CurrentPage - 1  )
+    state.CurrentPage -= 1;
+    state.Users = users;
 }
 
 const onUserChange = async() => {
@@ -27,6 +32,17 @@ export default {
     loadPreviousPage,
     onUserChange,
     reloadPage,
+
+    /**
+     * 
+     * @returns {Users[]}
+     */
+    getUsers: () => [...state.Users],
+    /**
+     * 
+     * @returns {Number}
+     */
+    getCurrentPage: () => state.CurrentPage,
 }
 
     
