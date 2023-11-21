@@ -10,6 +10,5 @@ export const loadPageByPage = async( page = 1 ) => {
     const res = await fetch( url );
     const data = await res.json();
     const users = data.map(lHostUserMapper);
-    console.log( users );
-    // return data;
+    return users;
 }
