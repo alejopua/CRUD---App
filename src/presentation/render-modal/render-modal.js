@@ -1,30 +1,39 @@
-import modalHtml from './render-modal.html?raw'; // ?raw only works in vite
 import './render-modal.css'
+import modalHtml from './render-modal.html?raw'; // ?raw only works in vite
+import { User } from '../../models/users';
+import { getUserById } from '../../usecases/get-user-by-id';
 
 let modal, form;
+let loadedUser = {};
 
-//TODO: load user for id
-export const showModal = () => {
+/**
+ * 
+ * @param {String | Number } id 
+ */
+export const showModal = async( id ) => {
     modal?.classList.remove('hide-modal');
+    loadedUser = {};
+    if(!id) return;
+    const user = await getUserById(id);
+    setFormValues( user );
 }
 
 export const hideModal = () => {
     modal?.classList.add('hide-modal');
     form?.reset();
-
-    //TODO: Reset del formulario
 }
 
-const loadingModal = () => {
-    const modalData = modal.querySelector('.modal-dialog');
-
-    // Aplica el estilo display: none; al elemento
-    modalData.style.display = 'none';
-
-    modal.innerHTML = `
-        <span style="font-weight: bold;">Loading...</span>
-    `;
-}
+/**
+ * 
+ * @param {User} user 
+ */
+const setFormValues = ( user ) => {
+    form.querySelector('[name="firstName"]').value = user.firstName;
+    form.querySelector('[name="lastName"]').value = user.lastName;
+    form.querySelector('[name="balance"]').value = user.balance;
+    form.querySelector('[name="isActive"]').checked = user.isActive;
+    loadedUser = user;
+};
 
 /**
  * 
@@ -49,7 +58,12 @@ export const RenderModal = (element, callback) => {
         e.preventDefault();
         
         const formData = new FormData( form );
-        const userlike = {};
+        const userlike = {...loadedUser};
+
+        if (!formData.get('isActive')) {
+            formData.append('isActive', 'off');
+        }
+
         for (const [key,value] of formData) {
             if (key === 'balance') {
                 userlike[key] = +value;
@@ -63,14 +77,8 @@ export const RenderModal = (element, callback) => {
 
             userlike[key] = value;
         }
-        // console.log(userlike);
         await callback(userlike);
-
-        loadingModal();
-
-        setTimeout(() => {
-            hideModal()
-        }, 500);
+        hideModal();
     })
 
     element.append(modal);
