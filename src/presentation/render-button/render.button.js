@@ -6,24 +6,24 @@ export const RenderButton = (element) => {
     const prevButton = document.createElement('button');
     prevButton.innerText = '< Prev';
 
-    const currentButton = document.createElement('span');
-    currentButton.id = 'currentPage';
-    currentButton.innerText = usersStore.getCurrentPage();
+    const currentPage = document.createElement('span');
+    currentPage.id = 'currentPage';
+    currentPage.innerText = usersStore.getCurrentPage();
 
     const nextButton = document.createElement('button');
     nextButton.innerText = 'Next >';
 
-    element.append(prevButton, currentButton, nextButton);
+    element.append(prevButton, currentPage, nextButton);
 
     nextButton.addEventListener('click', async() => {
         await usersStore.loadNextPage();
-        currentButton.innerText = usersStore.getCurrentPage();
+        currentPage.innerText = usersStore.getCurrentPage();
         RenderTable(element)
     })
 
     prevButton.addEventListener('click', async() => {
         await usersStore.loadPreviousPage();
-        currentButton.innerText = usersStore.getCurrentPage();
+        currentPage.innerText = usersStore.getCurrentPage();
         RenderTable(element)
     })
 
