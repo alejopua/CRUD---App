@@ -7,7 +7,6 @@ import { User } from "../models/users";
  */
 export const lHostUserMapper = ( localhostUser ) => {
     const {
-
         avatar,
         balance,
         first_name,
